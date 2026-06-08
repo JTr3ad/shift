@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shift — Jonathan Treadway</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #080808;
+  --deep: #0d0d0d;
+  --panel: #111111;
+  --white: #f7f5f2;
+  --off: #e8e5e0;
+  --gold: #c8b87a;
+  --gold-dim: #8a7e52;
+  --gray: #666;
+  --mid: #2a2a2a;
+  --subtle: #1a1a1a;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  background: var(--black);
+  color: var(--white);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 28px 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(8,8,8,0.9);
+  border-bottom: 0.5px solid rgba(200,184,122,0.15);
+  backdrop-filter: blur(12px);
+}
+
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: #777;
+  text-decoration: none;
+}
+
+.nav-cta {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 0.5px solid var(--gold-dim);
+  padding: 12px 28px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.nav-cta:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 72px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 280px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.018);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+  z-index: 0;
+}
+
+.hero-divider {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dim));
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 0.95;
+  color: var(--white);
+  margin-bottom: 48px;
+  letter-spacing: -0.03em;
+  max-width: 820px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 80px;
+  position: relative;
+  z-index: 1;
+  border-top: 0.5px solid #1e1e1e;
+  padding-top: 48px;
+}
+
+.hero-subtext { max-width: 440px; }
+
+.hero-subtext p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+
+.hero-subtext .descriptor {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: #444;
+  margin-top: 12px;
+}
+
+.hero-action {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.btn-primary {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--gold);
+  padding: 22px 52px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  margin-bottom: 12px;
+  white-space: nowrap;
+}
+
+.btn-primary:hover { opacity: 0.85; }
+
+.btn-note {
+  font-size: 11px;
+  color: #444;
+  letter-spacing: 0.05em;
+}
+
+/* PROBLEM */
+.section-problem {
+  background: var(--deep);
+  border-top: 0.5px solid #1a1a1a;
+}
+
+.section-problem-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 120px 72px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 120px;
+  align-items: start;
+}
+
+.section-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 120px;
+  font-weight: 300;
+  color: #1a1a1a;
+  line-height: 1;
+  margin-top: -16px;
+}
+
+.problem-content .section-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.problem-content .section-label::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: #222;
+  max-width: 120px;
+}
+
+.problem-content p {
+  font-size: 18px;
+  line-height: 2;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.problem-content .accent {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+  border-left: 1px solid var(--gold-dim);
+  padding-left: 28px;
+  margin: 40px 0;
+}
+
+/* SECTIONS */
+.section-what {
+  background: var(--black);
+  padding: 120px 72px;
+  border-top: 0.5px solid #141414;
+}
+
+.section-what-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 80px;
+  padding-bottom: 48px;
+  border-bottom: 0.5px solid #1a1a1a;
+}
+
+.section-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.1;
+  max-width: 480px;
+}
+
+.section-meta { text-align: right; }
+
+.section-meta .count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 72px;
+  font-weight: 300;
+  color: #1e1e1e;
+  line-height: 1;
+}
+
+.section-meta .count-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #333;
+}
+
+.section-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 40px;
+  padding: 32px 0;
+  border-bottom: 0.5px solid #141414;
+  align-items: center;
+  transition: border-color 0.3s;
+}
+
+.section-item:hover { border-bottom-color: #2a2a2a; }
+
+.section-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--gold-dim);
+  letter-spacing: 0.1em;
+  padding-top: 2px;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.section-sub {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+.section-arrow {
+  font-size: 16px;
+  color: #222;
+}
+
+/* FOR YOU */
+.section-foryou {
+  background: var(--panel);
+  padding: 120px 72px;
+  border-top: 0.5px solid #1a1a1a;
+}
+
+.section-foryou-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.foryou-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 72px;
+  line-height: 1.1;
+}
+
+.foryou-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.foryou-item {
+  padding: 28px 48px 28px 0;
+  border-top: 0.5px solid #1e1e1e;
+}
+
+.foryou-item p {
+  font-size: 16px;
+  color: #888;
+  line-height: 1.7;
+}
+
+.foryou-not {
+  margin-top: 64px;
+  padding: 36px 44px;
+  border: 0.5px solid #1e1e1e;
+  background: #0d0d0d;
+}
+
+.foryou-not p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* BIO */
+.section-bio {
+  background: var(--deep);
+  padding: 120px 72px;
+  border-top: 0.5px solid #141414;
+}
+
+.section-bio-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.bio-left {}
+
+.bio-photo-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #141414;
+  border: 0.5px solid #1e1e1e;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bio-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.bio-title {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #444;
+  line-height: 2;
+  text-transform: uppercase;
+}
+
+.bio-right p {
+  font-size: 17px;
+  line-height: 2;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.bio-right .bio-sig {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--gold-dim);
+  margin-top: 8px;
+}
+
+/* CTA */
+.section-cta {
+  background: var(--black);
+  border-top: 0.5px solid #1a1a1a;
+}
+
+.section-cta-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 120px 72px;
+  text-align: center;
+}
+
+.cta-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 40px;
+}
+
+.cta-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 760px;
+  margin: 0 auto 32px;
+}
+
+.cta-sub {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 56px;
+  letter-spacing: 0.02em;
+}
+
+.btn-cta {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--gold);
+  padding: 24px 64px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.btn-cta:hover { opacity: 0.85; }
+
+/* FOOTER */
+footer {
+  padding: 36px 72px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 0.5px solid #141414;
+}
+
+.footer-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: #2a2a2a;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: #2a2a2a;
+  letter-spacing: 0.05em;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .hero { padding: 120px 24px 80px; }
+  .hero-headline { font-size: 48px; }
+  .hero-bg-text { font-size: 120px; }
+  .hero-bottom { flex-direction: column; gap: 40px; align-items: flex-start; }
+  .hero-action { text-align: left; }
+  .section-problem-inner { grid-template-columns: 1fr; gap: 0; padding: 80px 24px; }
+  .section-number { display: none; }
+  .section-what, .section-foryou, .section-bio, .section-cta { padding: 80px 24px; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .foryou-grid { grid-template-columns: 1fr; }
+  .section-bio-inner { grid-template-columns: 1fr; gap: 48px; }
+  footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://jonathantreadway.com" class="nav-brand">Jonathan Treadway</a>
+  <a href="https://buy.stripe.com/cNidR82357iW2gt8z43VC01" class="nav-cta">Get The Shift — $27</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">THE SHIFT</div>
+  <div class="hero-divider"></div>
+  <div class="hero-eyebrow">The Shift</div>
+  <h1 class="hero-headline">Your Life Is a Reflection of the Standard You've Been Willing to Accept.</h1>
+  <div class="hero-bottom">
+    <div class="hero-subtext">
+      <p>The Shift is for men who are done tolerating the gap between who they are and who they know they could be.</p>
+      <p class="descriptor">For the man who knows he's capable of more. And is finally ready to do something about it.</p>
+    </div>
+    <div class="hero-action">
+      <a href="https://buy.stripe.com/cNidR82357iW2gt8z43VC01" class="btn-primary">Start The Shift — $27</a>
+      <span class="btn-note">One time. Yours for life.</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section-problem">
+  <div class="section-problem-inner">
+    <div class="section-number">01</div>
+    <div class="problem-content">
+      <div class="section-label">The problem</div>
+      <p>You've had the conversation with yourself before. You know what you're capable of. And you know what needs to change.</p>
+      <p>You've seen sparks of the man you can be. More than once.</p>
+      <p>You've been disciplined — in short bursts. But something keeps pulling you back to the same place. The same habits. The same comforts. Year after year.</p>
+      <p class="accent">Knowing what needs to change has never been your problem. You've known for a while. The problem is that knowledge without a standard is just awareness. And awareness alone has never changed anybody's life.</p>
+      <p>That's what The Shift is about. Finding what's actually been in the way. Removing it. And intentionally creating standards for your life that you refuse to lower.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IT IS -->
+<section class="section-what">
+  <div class="section-what-inner">
+    <div class="section-header">
+      <h2 class="section-headline">One sitting. Five sections. You read, you think, you write.</h2>
+      <div class="section-meta">
+        <div class="count">05</div>
+        <div class="count-label">Sections</div>
+      </div>
+    </div>
+
+    <div class="section-item">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-title">The Gap</div>
+        <div class="section-sub">The distance between who you are and who you know you could be</div>
+      </div>
+      <div class="section-arrow">→</div>
+    </div>
+
+    <div class="section-item">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-title">The Honest Look</div>
+        <div class="section-sub">What you've actually been accepting from yourself</div>
+      </div>
+      <div class="section-arrow">→</div>
+    </div>
+
+    <div class="section-item">
+      <div class="section-num">03</div>
+      <div>
+        <div class="section-title">What's Actually Happening</div>
+        <div class="section-sub">You're not undisciplined. You're unconscious. There's a moment between urge and action where choice lives.</div>
+      </div>
+      <div class="section-arrow">→</div>
+    </div>
+
+    <div class="section-item">
+      <div class="section-num">04</div>
+      <div>
+        <div class="section-title">The Commitment</div>
+        <div class="section-sub">Two things you are no longer willing to negotiate with</div>
+      </div>
+      <div class="section-arrow">→</div>
+    </div>
+
+    <div class="section-item">
+      <div class="section-num">05</div>
+      <div>
+        <div class="section-title">The Standard</div>
+        <div class="section-sub">Written by you. Kept by you. The line you refuse to fall below.</div>
+      </div>
+      <div class="section-arrow">→</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOR YOU -->
+<section class="section-foryou">
+  <div class="section-foryou-inner">
+    <h2 class="foryou-headline">This is for you if:</h2>
+    <div class="foryou-grid">
+      <div class="foryou-item"><p>You've been disciplined before and watched it fade</p></div>
+      <div class="foryou-item"><p>You know what needs to change but can't make it stick</p></div>
+      <div class="foryou-item"><p>You keep letting how you feel decide how you act</p></div>
+      <div class="foryou-item"><p>You've tried to change before and ended up in the same place</p></div>
+      <div class="foryou-item"><p>You're tired of starting over</p></div>
+      <div class="foryou-item"><p>You want to live by a standard, not by how you feel that day</p></div>
+      <div class="foryou-item"><p>You're willing to be honest with yourself about what's actually been going on</p></div>
+    </div>
+    <div class="foryou-not">
+      <p>This is not for you if you want motivation, a shortcut, or someone to tell you what you want to hear.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BIO -->
+<section class="section-bio">
+  <div class="section-bio-inner">
+    <div class="bio-left">
+      <div class="bio-photo-placeholder">
+        <!-- Jonathan's photo goes here -->
+      </div>
+      <h3 class="bio-name">Jonathan Treadway</h3>
+      <p class="bio-title">Men's Identity Coach<br>Standard Setter<br>Identity Architect</p>
+    </div>
+    <div class="bio-right">
+      <p>For a long time I thought my problem was discipline.</p>
+      <p>I'd get focused, build momentum, and then eventually fall back into my old habits. It wasn't for lack of trying. But I just never decided what I was willing to no longer accept from myself.</p>
+      <p>I had goals. I had massive ambition. But what I didn't have was a set of standards that I refused to negotiate with.</p>
+      <p>A goal is something you want. A standard is something you live.</p>
+      <p>Once I stopped chasing goals and started building standards — everything slowly started changing.</p>
+      <p>That's what The Shift is. The exact process I used to figure out what I was actually willing to accept from myself.</p>
+      <img src="logo.png" alt="Jonathan Treadway" style="height:64px; opacity:0.75; margin-top:32px; display:block;">
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta" id="cta">
+  <div class="section-cta-inner">
+    <div class="cta-eyebrow">The Shift</div>
+    <h2 class="cta-headline">You can't change your life until you change the man living it.</h2>
+    <a href="https://buy.stripe.com/cNidR82357iW2gt8z43VC01" class="btn-cta">Start The Shift — $27</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">Jonathan Treadway</span>
+  <span class="footer-copy">© 2026 Jonathan Treadway. All rights reserved.</span>
+</footer>
+
+</body>
+</html>
